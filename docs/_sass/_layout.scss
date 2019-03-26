@@ -6,7 +6,7 @@
   border-bottom: 1px solid $grey-color-light;
   min-height: $spacing-unit * 1.865;
   line-height: $base-line-height * $base-font-size * 2.25;
-
+  background-color: $brand-color;
   // Positioning context for the mobile navigation icon
   position: relative;
 }
@@ -24,7 +24,7 @@
 
   &,
   &:visited {
-    color: $grey-color-dark;
+    color: white;
   }
 }
 
@@ -75,7 +75,7 @@
   }
 
   .page-link {
-    color: $text-color;
+    color: white;
     line-height: $base-line-height;
     display: block;
     padding: 5px 10px;
