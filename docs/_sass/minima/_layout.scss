@@ -12,8 +12,9 @@
 }
 
 .site-title {
-  @include relative-font-size(1.625);
-  font-weight: 300;
+  // @include relative-font-size(1.625);
+  font-size: 20px;
+  font-weight: 500;
   letter-spacing: -1px;
   margin-bottom: 0;
   float: left;
@@ -75,8 +76,8 @@
   }
 
   .page-link {
-    color: white;
-    background-color: $orange-color;
+    color: $orange-color;
+    font-weight: 500;
     line-height: $base-line-height;
     display: block;
     padding: 5px 10px;
