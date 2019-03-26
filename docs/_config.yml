@@ -1,0 +1,6 @@
+	name: Empathy Spot
+	markdown: kramdown
+  theme: minima
+  
+  exclude: [CNAME]
+  
