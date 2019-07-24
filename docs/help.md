@@ -4,11 +4,9 @@ title: Empathy Spot Help
 ---
 # Help
 
-## Help Using Empathy Spot
+For help using Empathy Spot:
+* See: Getting started with Empathy Spot (Coming soon), or
+* Ask in our [Empathy Spot discussion](https://www.loomio.org/g/CtW4A2KG/empathy-spot-discussion) forum
 
-* Getting started with Empathy Spot (Coming soon)
-* [Empathy Spot discussion](https://www.loomio.org/g/CtW4A2KG/empathy-spot-discussion)
-
-## Other Resources
-
+For tips on exchanging empathy:
 * [NYCNVC Empathy Buddy Handbook](http://www.nycnvc.org/empathy_network/empathy-buddy-handbook/)
