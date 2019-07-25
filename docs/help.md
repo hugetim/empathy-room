@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Help
+title: help
 ---
-# help
+# Help
 
 For help using Empathy Spot:
 * See: Getting started with Empathy Spot (Coming soon), or
