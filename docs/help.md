@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Empathy Spot Help
+title: Help
 ---
 # help
 
