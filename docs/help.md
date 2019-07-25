@@ -2,7 +2,7 @@
 layout: default
 title: Empathy Spot Help
 ---
-# Help
+# help
 
 For help using Empathy Spot:
 * See: Getting started with Empathy Spot (Coming soon), or
