@@ -30,7 +30,7 @@ class MatchForm(MatchFormTemplate):
     self.confirming_wait = False
     self.drop_down_1.items = (("Willing to offer empathy first","will_offer_first"),
                               ("Not ready to offer empathy first","receive_first"))
-    tm, re, re_opts, re_st, pe, rt, s, lc, ps, tallies, e, n = anvil.server.call('prune')
+    tm, re, re_opts, re_st, pe, rt, s, lc, ps, tallies, e, n = anvil.server.call('init')
     if e == False:
       alert('This account is not yet authorized to match with other users. '
             + 'You can test things out, but your actions will not impact '
@@ -68,11 +68,13 @@ class MatchForm(MatchFormTemplate):
     if num == 1:
       message = ('Someone has been sent a '
                  + 'notification email about your request.')
+      headline = 'Email notification sent'
     else:
       message = (str(num) + ' others have been sent '
                  + 'notification emails about your request.')
+      headline = 'Email notifications sent'
     return Notification(message,
-                        title='Email notifications sent',
+                        title=headline,
                         timeout=10)
 
   def renew_button_click(self, **event_args):
@@ -145,7 +147,7 @@ class MatchForm(MatchFormTemplate):
       if seconds <= 0:
         self.tallies = anvil.server.call('cancel')
         alert("Request cancelled due to "
-              + str(p.WAIT_SECONDS) + " seconds of inactivity.",
+              + h.seconds_to_words(p.WAIT_SECONDS) + " of inactivity.",
               dismissible=False)
         self.status = None
         self.last_confirmed = None
