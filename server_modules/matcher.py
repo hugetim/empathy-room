@@ -71,6 +71,8 @@ def prune():
   assume_complete = datetime.timedelta(hours=4)
   _initialize_session()
   user = anvil.server.session['user']
+  # Set request_em (of all users) False if expired
+  _prune_request_em()
   # Prune requests, including from this user
   _prune_requests()
   # Complete old commenced matches for all users
@@ -85,7 +87,7 @@ def prune():
       temp[i] = 1
     row['complete'] = temp
   # Return after confirming wait
-  trust_level, request_em, pinged_em = _get_user_info()
+  trust_level, request_em, rem_opts, re_st, pinged_em = _get_user_info(user)
   email_in_list = None
   name = None
   if trust_level == 0:
@@ -111,7 +113,7 @@ def prune():
     request_type = _get_request_type(user)
   else:
     request_type = "will_offer_first"
-  return test_mode, request_em, pinged_em, request_type, status, lc, ps, tallies, email_in_list, name
+  return test_mode, request_em, rem_opts, re_st, pinged_em, request_type, status, lc, ps, tallies, email_in_list, name
 
 
 def _initialize_session():
@@ -488,15 +490,20 @@ def _new_match_id():
   return match_id.int
 
 
-def _get_user_info(user_id=""):
+def _get_user_info(user):
   """Return user info, initializing it for new users"""
-  user = _get_user(user_id)
   trust = user['trust_level']
   if trust is None:
     user['trust_level'] = 0
     user['request_em'] = False
     user['pinged_em'] = False
-  return user['trust_level'], user['request_em'], user['pinged_em']
+    user['request_em_settings'] = {fixed: 0, hours: 2}
+  re_opts = user['request_em_settings']
+  if (user['request_em'] == True and re_opts["fixed"] 
+      and h.re_hours(re_opts["hours"], user['request_em_set_time']) <= 0):
+    user['request_em'] = False
+  return (user['trust_level'], user['request_em'], user['request_em_settings'], 
+          user['request_em_set_time'], user['pinged_em'])
 
 
 @anvil.server.callable
@@ -514,7 +521,24 @@ def set_request_em(request_em_checked):
   print("set_request_em", request_em_checked)
   user = anvil.server.session['user']
   user['request_em'] = request_em_checked
-  return _confirm_wait(user)
+  if request_em_checked:
+    user['request_em_set_time'] = _now()
+  s, lc, ps, t = _confirm_wait(user)
+  return s, lc, ps, t, user['request_em_set_time']
+
+
+@anvil.server.callable
+@anvil.tables.in_transaction
+def set_request_em_opts(fixed, hours):
+  print("set_request_em_opts", fixed, hours)
+  user = anvil.server.session['user']
+  re_opts = user['request_em_settings']
+  re_opts["fixed"] = int(fixed)
+  re_opts["hours"] = hours
+  user['request_em_settings'] = re_opts
+  user['request_em_set_time'] = _now()
+  s, lc, ps, t = _confirm_wait(user)
+  return s, lc, ps, t, user['request_em_set_time']
 
 
 @anvil.server.callable
@@ -540,10 +564,22 @@ Empathy Spot maintainer
 p.s. You are receiving this email because you checked the box: "Notify me by email when a match is found." To stop receiving these emails, ensure this option is unchecked when requesting empathy.
 ''')
 
+  
+def _prune_request_em():
+  """Switch expired request_em to false"""
+  expired_rem_users = [u for u in app_tables.users.search(request_em=True)
+                       if (u['request_em_settings']['fixed']
+                           and h.re_hours(u['request_em_settings']['hours'], 
+                                          u['request_em_set_time']) <= 0)]
+  for a_user in expired_rem_users:
+    a_user['request_em'] = False
+  
 
 def _request_emails(request_type):
   """email all users with request_em_check_box checked who logged in recently"""
   assume_inactive = datetime.timedelta(days=p.ASSUME_INACTIVE_DAYS)
+  min_between = datetime.timedelta(minutes=p.MIN_BETWEEN_R_EM)
+  now = _now()
   user = anvil.server.session['user']
   name = user['name']
   if not name:
@@ -553,9 +589,11 @@ def _request_emails(request_type):
   else:
     assert request_type == "will_offer_first"
     request_type_text = 'an empathy exchange.'
-  cutoff_e = _now() - assume_inactive
+  cutoff_e = now - assume_inactive
+  _prune_request_em()
   emails = [u['email'] for u in app_tables.users.search(enabled=True, request_em=True)
                        if (u['last_login'] > cutoff_e
+                           and now > u['last_request_em'] + min_between
                            and u != user
                            and _is_visible(user, u))]
   for email_address in emails:
