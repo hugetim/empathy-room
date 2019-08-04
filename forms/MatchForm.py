@@ -33,7 +33,7 @@ class MatchForm(MatchFormTemplate):
     tm, re, re_opts, re_st, pe, rt, s, lc, ps, tallies, e, n = anvil.server.call('init')
     if e == False:
       alert('This account is not yet authorized to match with other users. '
-            + 'You can test things out, but your actions will not impact '
+            + 'Instead, it can be used to test things out. Your actions will not impact '
             + 'or be visible to other users. '
             + 'For help, contact: ' + p.CONTACT_EMAIL)
     elif e == True:
@@ -380,6 +380,10 @@ class MatchForm(MatchFormTemplate):
     """This method is called when the button is clicked"""
     self.logout_user()
 
+  def link_bar_logout_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    self.logout_user()
+    
   def logout_user(self):
     anvil.users.logout()
     self.status = None
@@ -413,10 +417,12 @@ class MatchForm(MatchFormTemplate):
   def set_request_em_options(self, checked):
     """Update state of request_em options."""
     if checked:
+      self.re_radio_button_panel.visible = True
       self.re_radio_button_indef.enabled = True
       self.re_radio_button_fixed.enabled = True
       self.text_box_hours.enabled = self.re_radio_button_fixed.selected
     else:
+      self.re_radio_button_panel.visible = False
       self.re_radio_button_indef.enabled = False
       self.re_radio_button_fixed.enabled = False
       self.text_box_hours.enabled = False
@@ -534,6 +540,10 @@ class MatchForm(MatchFormTemplate):
     action = self.test_other_action_drop_down.selected_value
     user_id = self.test_requestuser_drop_down.selected_value
     anvil.server.call(action, user_id)
+
+
+
+
 
 
 
