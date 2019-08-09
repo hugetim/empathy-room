@@ -14,4 +14,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-* (Under construction)
+* Many thanks to Shaun Taylor-Morgan for specific code snippets and advice, as well as the rest of the community at the [Anvil Community Forum](https://anvil.works/forum/).
+* Liam Hanninen provided very helpful early feedback.
