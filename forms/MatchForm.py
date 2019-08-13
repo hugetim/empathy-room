@@ -5,6 +5,7 @@ import anvil.google.auth, anvil.google.drive
 import anvil.server
 import anvil.users
 from TimerForm import TimerForm
+from MyJitsi import MyJitsi
 import parameters as p
 import anvil.tz
 import helper as h
@@ -38,6 +39,8 @@ class MatchForm(MatchFormTemplate):
             + 'For help, contact: ' + p.CONTACT_EMAIL)
     elif e == True:
       alert("Welcome, " + n + "!")
+    elif n:
+      self.welcome_label.text = "Hi, " + n + "!"
     self.test_mode.visible = tm
     self.init_request_em_opts(re, re_opts, re_st)
     self.pinged_em_check_box.checked = pe
@@ -47,6 +50,7 @@ class MatchForm(MatchFormTemplate):
     self.last_confirmed = lc
     self.ping_start = ps
     self.reset_status()
+    self.set_test_link()
 
   def seconds_left(self):
     """derive seconds_left from status, last_confirmed, and ping_start"""
@@ -214,11 +218,11 @@ class MatchForm(MatchFormTemplate):
     if self.status:
       if self.status != "matched":
         seconds = self.seconds_left()
+      self.welcome_label.visible = False
       self.request_button.visible = False
       self.drop_down_1.enabled = False
       self.drop_down_1.foreground = "gray"
       self.tally_label.visible = False
-      self.jitsi_test_check_box.visible = False
       if self.status == "requesting":
         self.status_label.text = "Status: Requesting an empathy exchange."
         self.note_label.text = ("(Note: When a match becomes available, "
@@ -254,79 +258,68 @@ class MatchForm(MatchFormTemplate):
           assert self.status == "matched"
           self.timer_label.visible = False
           jitsi_code, request_type = anvil.server.call('get_code')
-          self.status_label.text = "Status: You have a confirmed match. Use this Jitsi Meet code: "
-          self.status_label.bold = True
+          self.status_label.text = "Status: Exchanging Empathy"
+          self.status_label.bold = False
           self.renew_button.visible = False
           self.cancel_button.visible = False
           self.complete_button.visible = True
-          self.jitsi_link.font_size = None
           self.set_jitsi_link(jitsi_code)
-          self.note_label.text = "Note: Jitsi Meet mobile app users may need to manually open the app and input the code."
+          self.note_label.text = "Note: If video does not appear above, click the link below or input the code into the Jitsi Meet app."
           self.note_label.visible = True
         self.pinged_em_check_box.visible = False
     else:
-      self.status_label.text = "Request an empathy match when ready"
-      self.status_label.bold = True
-      self.jitsi_test_check_box.visible = True
-      self.jitsi_link.font_size = 12
-      self.set_jitsi_link(self.test_jitsi_code())
-      self.note_label.text = "Note: Jitsi Meet mobile app users may need to manually open the app and input the code."
-      self.note_label.visible = True
+      self.welcome_label.visible = True
+      self.status_label.text = "Request an empathy match whenever you're ready."
+      self.status_label.bold = False
+      self.set_jitsi_link("")
+      self.note_label.text = ""
+      self.note_label.visible = False
       self.timer_label.visible = False
       self.complete_button.visible = False
       self.renew_button.visible = False
       self.cancel_button.visible = False
-      self.request_button.enabled = self.jitsi_test_check_box.checked
-      self.update_request_tooltip(self.request_button.enabled)
       self.request_button.visible = True
       self.drop_down_1.enabled = True
       self.drop_down_1.foreground = "black"
       self.pinged_em_check_box.visible = False
       self.update_tally_label()
 
-  def update_request_tooltip(self, enabled):
-    if enabled:
-      self.request_button.tooltip = "Request to be matched with someone to exchange empathy"
-    else:
-      self.request_button.tooltip = "The box above must be checked before you can request empathy"
-
-  def jitsi_test_check_box_change(self, **event_args):
-    """This method is called when this checkbox is checked or unchecked"""
-    self.request_button.enabled = self.jitsi_test_check_box.checked
-    self.update_request_tooltip(self.request_button.enabled)
-      
   def update_tally_label(self):
     temp = ""
     if self.tallies['receive_first'] > 1:
       if self.tallies['will_offer_first'] > 0:
-        temp = (str(self.tallies['receive_first'] + self.tallies['will_offer_first'])
-                + ' current requests for an empathy exchange, '
-                + 'some of which are requesting a partner willing to offer empathy first.')
+        temp = ('There are currently '
+                + str(self.tallies['receive_first'] + self.tallies['will_offer_first'])
+                + ' others requesting an empathy exchange. Some are '
+                + 'requesting a match with someone willing to offer empathy first.')
       else:
         assert self.tallies['will_offer_first'] == 0
-        temp = (str(self.tallies['receive_first'])
-                + ' current requests for an empathy exchange, '
-                + 'all of which are requesting a partner willing to offer empathy first.')
+        temp = ('There are currently '
+                + str(self.tallies['receive_first'])
+                + ' others requesting matches with someone willing to offer empathy first.')
     elif self.tallies['receive_first'] == 1:
       if self.tallies['will_offer_first'] > 0:
-        temp = (str(self.tallies['receive_first'] + self.tallies['will_offer_first'])
-                + ' current requests for an empathy exchange. '
-                + 'One is requesting a partner willing to offer empathy first.')
+        temp = ('There are currently '
+                + str(self.tallies['receive_first'] + self.tallies['will_offer_first'])
+                + ' others requesting an empathy exchange. '
+                + 'One is requesting a match with someone willing to offer empathy first.')
       else:
         assert self.tallies['will_offer_first'] == 0
-        temp = (str(self.tallies['receive_first'])
-                + ' current request for an empathy exchange, '
-                + 'requesting a partner willing to offer empathy first.')
+        temp = ('There is '
+                + str(self.tallies['receive_first'])
+                + ' active request for a match with someone willing to offer empathy first.')
     else:
       assert self.tallies['receive_first'] == 0
       if self.tallies['will_offer_first'] > 1:
-        temp = (str(self.tallies['will_offer_first'])
-                + ' current requests for an empathy exchange, '
-                + 'all of which are willing to offer empathy first.')
+        temp = ('There are currently '
+                + str(self.tallies['will_offer_first'])
+                + ' others requesting an empathy exchange, '
+                + 'all of whom are willing to offer empathy first.')
       elif self.tallies['will_offer_first'] == 1:
-        temp = (str(self.tallies['will_offer_first'])
-                + ' current request for an empathy exchange '
-                + 'by someone willing to offer empathy first.')
+        temp = ('There is currently '
+                + str(self.tallies['will_offer_first'])
+                + ' person requesting an empathy exchange, '
+                + 'willing to offer empathy first.')
       else:
         assert self.tallies['will_offer_first'] == 0
     if self.tallies['will_offer_first'] == 0:
@@ -360,6 +353,7 @@ class MatchForm(MatchFormTemplate):
 
   def set_jitsi_link(self, jitsi_code):
     if jitsi_code == "":
+      self.jitsi_column_panel.visible = False
       self.jitsi_link.visible = False
       self.jitsi_link.text = ""
       self.jitsi_link.url = ""
@@ -367,13 +361,16 @@ class MatchForm(MatchFormTemplate):
       self.jitsi_link.url = "https://meet.jit.si/" + jitsi_code
       self.jitsi_link.text = jitsi_code
       self.jitsi_link.visible = True
+      jitsi = self.jitsi_column_panel.add_component(MyJitsi(jitsi_code))
+      self.jitsi_column_panel.visible = True
 
-  def test_jitsi_code(self):
+  def set_test_link(self):
     num_chars = 4
     charset = "abcdefghijkmnopqrstuvwxyz23456789"
     random.seed()
     rand_code = "".join([random.choice(charset) for i in range(num_chars)])
     code = "test-" + rand_code
+    self.test_link.url = "https://meet.jit.si/" + code
     return code      
       
   def logout_button_click(self, **event_args):
