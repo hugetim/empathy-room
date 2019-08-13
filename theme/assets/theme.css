@@ -1,14 +1,13 @@
-/* Shadow values taken from 
-https://stackoverflow.com/questions/30533055/calculating-shadow-values-for-all-material-design-elevations
-*/
+/**
+ This CSS implements the Material Design look and feel for Anvil apps.
+ **/
 
-/* The most awful hack to stop panel-cols cutting off drop shadows */
+/* Stop panel-cols cutting off drop shadows */
 .anvil-panel-col {
   padding-bottom: 10px;
   margin-bottom: -10px;
 }
 
-/* And a nasty placeholder */
 .content > .placeholder {
   margin: 16px;
   color: #888;
@@ -116,6 +115,11 @@ a:hover, a:active {
   line-height: 1.5;
 }
 
+.anvil-role-input-prompt {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
 .anvil-role-display-4 {
   font-size: 112px;
   font-weight: light;
@@ -127,6 +131,52 @@ a:hover, a:active {
 .anvil-role-text > .label-text, .anvil-role-text .link-text {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+/* Bubble Roles */
+
+.anvil-role-bubble-left {
+	position: relative;
+	background: %color:White%;
+	border-radius: .4em;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.anvil-role-bubble-left::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0%;
+	width: 0;
+	height: 0;
+	border: 14px solid transparent;
+	border-right-color: %color:White%;
+	border-left: 0;
+	border-top: 0;
+	margin-top: -0px;
+	margin-left: -8px;
+}
+
+.anvil-role-bubble-right {
+	position: relative;
+	background: %color:Gray 300%;
+	border-radius: .4em;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.anvil-role-bubble-right::after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 0%;
+	width: 0;
+	height: 0;
+	border: 14px solid transparent;
+	border-left-color: %color:Gray 300%;
+	border-right: 0;
+	border-top: 0;
+	margin-top: -0px;
+	margin-right: -8px;
 }
 
 /* Page structure: App bar with optional left nav */
@@ -143,11 +193,14 @@ a:hover, a:active {
 }
 
 .app-bar {
-  flex: 0;
+  flex: 0 0;
+  flex-basis: auto;
+  flex-basis: content;
 }
 
 .nav-holder {
   flex-grow: 1;
+  overflow-y: auto;
 }
 
 /* Mobile and desktop margins for content */
@@ -159,6 +212,10 @@ a:hover, a:active {
   .content > * > .anvil-container {
     padding: 16px 24px;
   }
+}
+
+.content .anvil-measure-this {
+  padding-bottom: 1px; /* Prevent margin collapse messing up embedding */
 }
 
 /* Allow overflows to show drop shadows in ColumnPanels
@@ -187,6 +244,8 @@ a:hover, a:active {
 .nav-shield {
   display: none;
 }
+
+/* Mobile: Nav bar is a modal overlay */
 
 /* Mobile: Nav bar is a modal overlay */
 
@@ -485,6 +544,30 @@ body>div[data-notify="container"]>span[data-notify="message"] {
   color: #747474;  
 }
 
+body>div[data-notify="container"].alert-success{
+  background-color: #d4edda;
+}
+
+body>div[data-notify="container"].alert-success>span[data-notify="title"]{
+  color: #155724;
+}
+
+body>div[data-notify="container"].alert-danger{
+  background-color: #f8d7da;
+}
+
+body>div[data-notify="container"].alert-danger>span[data-notify="title"]{
+  color: #721c24;
+}
+
+body>div[data-notify="container"].alert-warning{
+  background-color: #fff3cd;
+}
+
+body>div[data-notify="container"].alert-warning>span[data-notify="title"]{
+  color: #856404;
+}
+
 
 /* Component: Button */
 
@@ -592,7 +675,28 @@ body>div[data-notify="container"]>span[data-notify="message"] {
   margin-bottom: -8px;
 }
 
-
+.anvil-role-card-scroll {
+  height: 100px;
+  overflow: auto;
+  border-radius: 2px;
+  background-color: white;
+  padding: 8px 12px;
+  /* 2dp */  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+/* full_width_row sections go full bleed */
+.column-panel.anvil-role-card-scroll > .anvil-panel-section > .anvil-panel-section-container.full-width-row {
+  margin-left: -12px;
+  margin-right: -12px;
+  width: initial;
+  max-width: initial;
+}
+/* If the first row of a card is a full_width_row, it goes to the top */
+.column-panel.anvil-role-card-scroll > .anvil-panel-section:first-child > .anvil-panel-section-container.full-width-row {
+  margin-top: -8px;
+}
+.column-panel.anvil-role-card-scroll > .anvil-panel-section:last-child > .anvil-panel-section-container.full-width-row {
+  margin-bottom: -8px;
+}
 
 /* Component: TextBox + TextArea */
 
@@ -619,6 +723,7 @@ input.anvil-component, .anvil-component select, .anvil-datepicker input {
   border-bottom: 1px solid rgba(0,0,0,0.42);
 
   transition: border-bottom 0.2s, padding-bottom 0.2s;
+  -moz-transition: none; /* Firefox is jumpy, so disable transitions */
 }
 
 textarea.anvil-component {
@@ -733,4 +838,7 @@ textarea.anvil-component[disabled] {
   font-size: 16px;
 }
 
+/* Shadow values taken from 
+https://stackoverflow.com/questions/30533055/calculating-shadow-values-for-all-material-design-elevations
+*/
 

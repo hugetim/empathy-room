@@ -22,6 +22,7 @@ class MatchForm(MatchFormTemplate):
   request_em_hours = None
   request_em_set_time = None
   pause_hours_update = False
+  jitsi_embed = None
 
   def __init__(self, **properties):
     # You must call self.init_components() before doing anything else in this function
@@ -49,6 +50,7 @@ class MatchForm(MatchFormTemplate):
     self.status = s
     self.last_confirmed = lc
     self.ping_start = ps
+    self.jitsi_embed = None
     self.reset_status()
     self.set_test_link()
 
@@ -141,6 +143,9 @@ class MatchForm(MatchFormTemplate):
     elif self.status is None:
       self.tallies = anvil.server.call_s('get_tallies')
       self.update_tally_label()
+    elif self.status == "matched":
+      self.chat_repeating_panel.items = anvil.server.call_s('get_messages')
+      self.call_js('scrollCard') 
 
   def timer_2_tick(self, **event_args):
     """This method is called Every 1 seconds"""
@@ -264,7 +269,7 @@ class MatchForm(MatchFormTemplate):
           self.cancel_button.visible = False
           self.complete_button.visible = True
           self.set_jitsi_link(jitsi_code)
-          self.note_label.text = "Note: If video does not appear above, click the link below or input the code into the Jitsi Meet app."
+          self.note_label.text = "Note: If video does not appear above, try clicking the link below or using the Jitsi Meet app."
           self.note_label.visible = True
         self.pinged_em_check_box.visible = False
     else:
@@ -354,15 +359,31 @@ class MatchForm(MatchFormTemplate):
   def set_jitsi_link(self, jitsi_code):
     if jitsi_code == "":
       self.jitsi_column_panel.visible = False
+      if self.jitsi_embed:
+        self.jitsi_embed.remove_from_parent()
+        self.jitsi_embed = None
+      self.chat_display_card.visible = False
+      self.chat_send_card.visible = False
       self.jitsi_link.visible = False
       self.jitsi_link.text = ""
       self.jitsi_link.url = ""
+      self.test_link.visible = True
     else:
       self.jitsi_link.url = "https://meet.jit.si/" + jitsi_code
       self.jitsi_link.text = jitsi_code
       self.jitsi_link.visible = True
-      jitsi = self.jitsi_column_panel.add_component(MyJitsi(jitsi_code))
+      if not self.jitsi_embed:
+        self.jitsi_embed = MyJitsi(jitsi_code)
+        self.jitsi_column_panel.add_component(self.jitsi_embed)
       self.jitsi_column_panel.visible = True
+      self.test_link.visible = False
+      self.chat_repeating_panel.items = anvil.server.call_s('get_messages')
+      self.chat_display_card.visible = True
+      self.chat_send_card.visible = True
+
+  def chat_display_card_show(self, **event_args):
+    """This method is called when the column panel is shown on the screen"""
+    self.call_js('scrollCard')
 
   def set_test_link(self):
     num_chars = 4
@@ -497,7 +518,14 @@ class MatchForm(MatchFormTemplate):
   def text_box_hours_focus(self, **event_args):
     """This method is called when the TextBox gets focus"""
     self.pause_hours_update = True   
-      
+
+  def message_textbox_pressed_enter(self, **event_args):
+    """This method is called when the user presses Enter in this text box"""
+    anvil.server.call('add_message', self.message_textbox.text)
+    self.message_textbox.text = ""
+    self.chat_repeating_panel.items = anvil.server.call('get_messages')
+    self.call_js('scrollCard')
+    
   def test_mode_change(self, **event_args):
     """This method is called when this checkbox is checked or unchecked"""
     self.test_column_panel.visible = self.test_mode.checked
@@ -537,6 +565,10 @@ class MatchForm(MatchFormTemplate):
     action = self.test_other_action_drop_down.selected_value
     user_id = self.test_requestuser_drop_down.selected_value
     anvil.server.call(action, user_id)
+
+
+
+
 
 
 
