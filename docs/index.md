@@ -17,4 +17,4 @@ The prototype for Empathy Spot is in an "alpha" phase of development and testing
 
 ## Is Empathy Spot for me?
 
-If you are a student of Compassionate Communication, a.k.a. [Nonviolent Communication (NVC)](http://www.nycnvc.org/our-work/), Empathy Spot is being designed for you. But in order to fully participate, you will first need some form of in-person connection with a certified NVC trainer. 
+If you are a student of Compassionate Communication, a.k.a. [Nonviolent Communication (NVC)](http://www.nycnvc.org/our-work/), Empathy Spot is being designed for you, particularly if you are already connected with a certified NVC trainer. If you are an NVC trainer, Empathy Spot is especially intended to support and empower you.
