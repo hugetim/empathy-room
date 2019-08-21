@@ -3,7 +3,7 @@ layout: default
 title: Empathy Spot
 ---
 
-Welcome! If you've been invited to test out Empathy Spot, [click here to sign up or login](https://www.empathyspot.org/in/).
+Welcome! If you've been invited to try out Empathy Spot, [click here to sign up or login](https://www.empathyspot.org/in/).
 
 ## Vision
 
