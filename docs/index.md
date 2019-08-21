@@ -43,6 +43,8 @@ The Empathy Spot prototype is built using [Anvil](https://anvil.works/), an easy
 
 The Anvil (python) code for Empathy Spot is [open source](https://github.com/hugetim/empathyspot), which doesn't provide much immediate reassurance but ultimately means that technically-inclined users will be able to inspect it themselves with regard to its privacy and security. In any case, the only information currently stored is your email address and activity on the site (basically, time stamps recording when you requested empathy and when you were successfully matched with someone for an empathy exchange). Any text chat logs are deleted once your empathy exchange is complete.
 
+One inherent risk in participating via video chat is the possibility that the other person will secretly record you and share that recording with others. It may also be possible to use your image or voice to determine your identity. Voice-only and text-only options are available to mitigate this risk.
+
 ### What is Jitsi?
 
 The video conferencing is provided via [Jitsi](https://github.com/jitsi/jitsi-meet), which is an open source project with an active community. It doesn't require account login, and it emphasizes privacy and security. It is owned by [8x8](https://www.8x8.com/about-us), which seems legit. The video conferencing is hosted separately from the Anvil webapp, so the Anvil app doesn't even see the video conference data.
