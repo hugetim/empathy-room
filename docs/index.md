@@ -17,11 +17,11 @@ The prototype for Empathy Spot is in an "alpha" phase of development and testing
 
 ### Is Empathy Spot for me?
 
-* If you are a student of Compassionate Communication, a.k.a. [Nonviolent Communication (NVC)](http://www.nycnvc.org/our-work/), Empathy Spot is being designed for you, particularly if you are already connected with a certified NVC trainer. 
-* If you are an NVC trainer, Empathy Spot is especially made to support and empower you. 
+* If you are a student of Compassionate Communication, a.k.a. [Nonviolent Communication (NVC)](http://www.nycnvc.org/our-work/), Empathy Spot is designed for you, particularly if you are connected with a certified NVC trainer. 
+* If you are an NVC trainer, Empathy Spot is especially meant to support your work. 
 * And if someone already participating in Empathy Spot has invited you, welcome, you're in the right place! 
 * For others, Empathy Spot is not really intended for you, at least at this point. Instead, the next step may be to connect with a local [event](https://www.cnvc.org/trainings), [trainer](https://www.cnvc.org/trainers), or [community](https://www.cnvc.org/trainings/practice-groups) to learn how to exchange empathy in the "NVC" way.
 
 ### Why not let everyone use it?
 
-Well, it is not designed to teach people how to exchange empathy. So the current idea is that NVC trainers will register their students, vouching for their ability to exchange empathy. Everyone registered that way, including by different trainers, will be able to match with each other. And students, in turn, will have a more limited ability to invite others to their personal groups (which will be able to match with each other but not the wider community, unless they are vouched for themselves by an NVC trainer). 
+Empathy Spot is not designed to teach people how to exchange empathy, and it also requires some form of gatekeeping to discourage unintended uses. So the idea, currently, is that NVC trainers will vouch for their students, authorizing them to match with any other member to exchange empathy. Each member, in turn, will be able to invite guests to a personal group, allowing them to match with others in that group (but not the wider membership, unless vouched for by an NVC trainer). 
