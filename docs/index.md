@@ -7,7 +7,7 @@ Welcome! If you've been invited to test out Empathy Spot, [click here to sign up
 
 ## Vision
 
-To make it possible to find someone to exchange empathy with via videochat at any time, in a way that complements--rather than undermines--in-person communities.
+To make it possible to find someone to exchange empathy with via videochat at any time, in a way that empowers NVC trainers and reinforces in-person communities.
 
 ## Current Status
 
