@@ -22,6 +22,27 @@ def _now():
   return datetime.datetime.utcnow().replace(tzinfo=anvil.tz.tzutc())
 
 
+def _seconds_left(status, last_confirmed, ping_start=None):
+  if status in ["pinging", "pinged"]:
+    if ping_start:
+      confirm_match = p.CONFIRM_MATCH_SECONDS - (_now() - ping_start).seconds
+    else:
+      confirm_match = p.CONFIRM_MATCH_SECONDS
+    if status == "pinging":
+      return confirm_match + 2*p.BUFFER_SECONDS # accounts for delay in response arriving
+    elif status == "pinged":
+      return confirm_match + p.BUFFER_SECONDS # accounts for delay in ping arriving
+  elif status == "requesting":
+    if last_confirmed:
+      return p.WAIT_SECONDS - (_now() - last_confirmed).seconds
+    else:
+      return p.WAIT_SECONDS
+  elif status in [None, "matched"]:
+    return None
+  else:
+    print("matcher.seconds_left(s,lc,ps): " + status)
+
+
 def _prune_requests():
   """Prune definitely outdated requests, unmatched then matched"""
   timeout = datetime.timedelta(seconds=p.WAIT_SECONDS + p.CONFIRM_MATCH_SECONDS + 2*p.BUFFER_SECONDS)
@@ -113,21 +134,19 @@ def init():
   else:
     name = user['name']
   test_mode = trust_level >= TEST_TRUST_LEVEL
-  status, lc, ps, tallies = _get_status(user)
-  if status in ('pinged', 'pinging'):
-    seconds_left = h.seconds_left(status, lc, ps)
-    if status == 'pinged' and seconds_left <= 0:
-      status, lc, ps, tallies = _cancel(user)
-    elif status == 'pinged':
-      status, lc, ps, tallies = _match_commenced(user)
-    elif status == 'pinging' and seconds_left <= 0:
-      status, lc, ps, tallies = _cancel_other(user)
+  status, seconds_left, tallies = _get_status(user)
+  if status == 'pinged' and seconds_left <= 0:
+    status, seconds_left, tallies = _cancel(user)
+  elif status == 'pinged':
+    status, seconds_left, tallies = _match_commenced(user)
+  elif status == 'pinging' and seconds_left <= 0:
+    status, seconds_left, tallies = _cancel_other(user)
   if status in ('requesting', 'pinged', 'pinging'):
-    status, lc, ps, tallies = _confirm_wait(user)
+    status, seconds_left, tallies = _confirm_wait(user)
     request_type = _get_request_type(user)
   else:
     request_type = "will_offer_first"
-  return test_mode, request_em, rem_opts, re_st, pinged_em, request_type, status, lc, ps, tallies, email_in_list, name
+  return test_mode, request_em, rem_opts, re_st, pinged_em, request_type, status, seconds_left, tallies, email_in_list, name
 
 
 def _initialize_session():
@@ -179,10 +198,10 @@ def _confirm_wait(user):
   current_row = app_tables.requests.get(user=user, current=True)
   if current_row:
     current_row['last_confirmed'] = _now()
-  status, last_confirmed, ping_start, tallies = _get_status(user)
+  status, seconds_left, tallies = _get_status(user)
   if status == "requesting":
     num_emailed = _request_emails(current_row['request_type'])
-  return status, last_confirmed, ping_start, tallies
+  return status, seconds_left, tallies
 
 
 @anvil.server.callable
@@ -227,7 +246,7 @@ def _get_status(user):
       if row['complete'][i] == 0:
         status = "matched"
         ping_start = row['match_commence']
-  return status, last_confirmed, ping_start, tallies
+  return status, _seconds_left(status, last_confirmed, ping_start), tallies
 
 
 @anvil.server.callable
@@ -347,17 +366,17 @@ def add_request(request_type, user_id=""):
 
 def _add_request(user, request_type):
   """
-  return status, last_confirmed, ping_start, num_emailed
+  return status, seconds_left, num_emailed
   """
   num_emailed = 0
-  status, last_confirmed, ping_start, tallies = _get_status(user)
+  status, seconds_left, tallies = _get_status(user)
   assert status == None
   _add_request_row(user, request_type)
   _create_matches()
-  status, last_confirmed, ping_start, tallies = _get_status(user)
+  status, seconds_left, tallies = _get_status(user)
   if status == "requesting":
     num_emailed = _request_emails(request_type)
-  return status, last_confirmed, ping_start, num_emailed
+  return status, seconds_left, num_emailed
 
 
 def _cancel(user):
@@ -371,7 +390,7 @@ def _cancel(user):
         row['ping_start'] = None
         row['match_id'] = None
         row['jitsi_code'] = None
-        if h.seconds_left("requesting", row['last_confirmed']) <= 0:
+        if _seconds_left("requesting", row['last_confirmed']) <= 0:
           row['current'] = False
       current_row['missed_pings'] += 1
       _create_matches()
@@ -404,7 +423,7 @@ def _cancel_other(user):
         if row['user'] != user:
           row['missed_pings'] += 1
           row['current'] = False
-        if h.seconds_left("requesting", row['last_confirmed']) <= 0:
+        if _seconds_left("requesting", row['last_confirmed']) <= 0:
           row['current'] = False
       _create_matches()
   return _get_status(user)
@@ -528,15 +547,12 @@ def add_message(user_id="", message="[blank]"):
   print("add_message", "[redacted]", user_id)
   user = _get_user(user_id)
   now = _now()
-  current_matches = app_tables.matches.search(users=[user], complete=[0])
-  for row in current_matches:
-    i = row['users'].index(user)
-    if row['complete'][i] == 0:
-      current_match = row
+  current_match = _current_match(user)
   app_tables.chat.add_row(match=current_match,
                           user=user, 
                           message=message,
                           time_stamp=now)
+  return _get_messages(user)
 
     
 @anvil.server.callable
@@ -545,14 +561,24 @@ def get_messages(user_id=""):
   Returns iterable of dictionaries with keys: 'me', 'message'
   """
   user = _get_user(user_id)
+  return _get_messages(user)
+  
+  
+def _get_messages(user):
+  current_match = _current_match(user)
+  messages = app_tables.chat.search(match=current_match)
+  if messages:
+    return [{'me': (user == m['user']), 'message': m['message']} for m in messages]
+
+  
+def _current_match(user):
+  current_match = None
   current_matches = app_tables.matches.search(users=[user], complete=[0])
   for row in current_matches:
     i = row['users'].index(user)
     if row['complete'][i] == 0:
       current_match = row
-  messages = app_tables.chat.search(match=current_match)
-  if messages:
-    return [{'me': (user == m['user']), 'message': m['message']} for m in messages]
+  return current_match
 
     
 @anvil.server.callable
@@ -572,8 +598,8 @@ def set_request_em(request_em_checked):
   user['request_em'] = request_em_checked
   if request_em_checked:
     user['request_em_set_time'] = _now()
-  s, lc, ps, t = _confirm_wait(user)
-  return s, lc, ps, t, user['request_em_set_time']
+  s, sl, t = _confirm_wait(user)
+  return s, sl, t, user['request_em_set_time']
 
 
 @anvil.server.callable
@@ -586,8 +612,8 @@ def set_request_em_opts(fixed, hours):
   re_opts["hours"] = hours
   user['request_em_settings'] = re_opts
   user['request_em_set_time'] = _now()
-  s, lc, ps, t = _confirm_wait(user)
-  return s, lc, ps, t, user['request_em_set_time']
+  s, sl, t = _confirm_wait(user)
+  return s, sl, t, user['request_em_set_time']
 
 
 @anvil.server.callable
