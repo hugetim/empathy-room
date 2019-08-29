@@ -28,7 +28,7 @@ class MatchForm(MatchFormTemplate):
   def __init__(self, **properties):
     # You must call self.init_components() before doing anything else in this function
     self.init_components(**properties)
-
+  
     # 'prune' initializes new users to trust level 0 (via '_get_user_info')
     self.confirming_wait = False
     self.drop_down_1.items = (("Willing to offer empathy first","will_offer_first"),
@@ -52,7 +52,9 @@ class MatchForm(MatchFormTemplate):
     self.set_test_link()
     self.set_seconds_left(s, sl)
     self.reset_status()
-
+    self.timer_1.interval = 1
+    self.timer_2.interval = 1
+    
   def set_seconds_left(self, new_status=None, new_seconds_left=None):
     """
     Set status and related time variables
@@ -147,8 +149,10 @@ class MatchForm(MatchFormTemplate):
           self.request_em_set_time = re_st
           if s != self.status:
             self.set_seconds_left(s, sl)
-          self.tallies = t
-          self.reset_status()
+            self.reset_status()
+          if not s:
+            self.tallies = t
+            self.update_tally_label()
         else:
           self.text_box_hours.text = "{:.1f}".format(hours_left)
       if self.status == "requesting":
@@ -234,7 +238,7 @@ class MatchForm(MatchFormTemplate):
         self.complete_button.visible = False
         self.renew_button.visible = True
         self.cancel_button.visible = True
-        self.pinged_em_check_box.visible = True
+        self.pinged_em_check_panel.visible = True
       else:
         if self.status == "pinged":
           return self.confirm_match(self.seconds_left)
@@ -262,7 +266,7 @@ class MatchForm(MatchFormTemplate):
           self.set_jitsi_link(jitsi_code)
           self.note_label.text = "Note: If video does not appear above, try clicking the link below or using the Jitsi Meet app."
           self.note_label.visible = True
-        self.pinged_em_check_box.visible = False
+        self.pinged_em_check_panel.visible = False
     else:
       self.welcome_label.visible = True
       self.status_label.text = "Request an empathy match whenever you're ready."
@@ -275,7 +279,7 @@ class MatchForm(MatchFormTemplate):
       self.request_button.visible = True
       self.drop_down_1.enabled = True
       self.drop_down_1.foreground = "black"
-      self.pinged_em_check_box.visible = False
+      self.pinged_em_check_panel.visible = False
       self.update_tally_label()
 
   def update_tally_label(self):
