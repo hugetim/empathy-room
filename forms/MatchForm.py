@@ -64,6 +64,7 @@ class MatchForm(MatchFormTemplate):
       self.seconds_left = h.seconds_left(new_status, last_confirmed, ping_start)
       if self.status == "pinging" and new_status == "requesting":
         self.seconds_left = max(self.seconds_left, p.BUFFER_SECONDS)
+    print('before status change: ', self.seconds_left)
     self.status = new_status
     self.last_confirmed = last_confirmed
     self.ping_start = ping_start
@@ -146,7 +147,7 @@ class MatchForm(MatchFormTemplate):
           self.request_em_check_box.checked = checked
           self.set_request_em_options(checked)
           self.text_box_hours.text = "{:.1f}".format(self.request_em_hours)
-          s, lc, ps, t, re_st = anvil.server.call('set_request_em', checked)
+          s, lc, ps, t, re_st = anvil.server.call_s('set_request_em', checked)
           self.request_em_set_time = re_st
           if s != self.status:
             self.set_seconds_left(s, lc, ps)
@@ -170,8 +171,12 @@ class MatchForm(MatchFormTemplate):
         self.tallies = anvil.server.call_s('get_tallies')
         self.update_tally_label()
       elif self.status == "matched":
-        self.chat_repeating_panel.items = anvil.server.call_s('get_messages')
-        self.call_js('scrollCard') 
+        old_items = self.chat_repeating_panel.items
+        new_items = anvil.server.call_s('get_messages')
+        if len(new_items) > len(old_items):
+          self.chat_repeating_panel.items = new_items
+          self.call_js('scrollCard')
+          self.chat_display_card.scroll_into_view()
         
   def confirm_wait(self):
     s, lc, ps, self.tallies = anvil.server.call('confirm_wait')
@@ -267,8 +272,6 @@ class MatchForm(MatchFormTemplate):
       self.status_label.text = "Request an empathy match whenever you're ready."
       self.status_label.bold = False
       self.set_jitsi_link("")
-      self.note_label.text = ""
-      self.note_label.visible = False
       self.timer_label.visible = False
       self.complete_button.visible = False
       self.renew_button.visible = False
@@ -300,7 +303,7 @@ class MatchForm(MatchFormTemplate):
                 + 'One is requesting a match with someone willing to offer empathy first.')
       else:
         assert self.tallies['will_offer_first'] == 0
-        temp = ('There is currently one person requesting a match with someone willing to offer empathy first.')
+        temp = ('There is one person currently requesting a match with someone willing to offer empathy first.')
     else:
       assert self.tallies['receive_first'] == 0
       if self.tallies['will_offer_first'] > 1:
@@ -309,9 +312,8 @@ class MatchForm(MatchFormTemplate):
                 + ' others requesting an empathy exchange, '
                 + 'all of whom are willing to offer empathy first.')
       elif self.tallies['will_offer_first'] == 1:
-        temp = ('There is currently '
-                + str(self.tallies['will_offer_first'])
-                + ' person requesting an empathy exchange, '
+        temp = ('There is one'
+                + ' person currently requesting an empathy exchange, '
                 + 'willing to offer empathy first.')
       else:
         assert self.tallies['will_offer_first'] == 0
@@ -322,8 +324,7 @@ class MatchForm(MatchFormTemplate):
                    + ' others are currently receiving email notifications '
                    + 'about each request for empathy.')
         elif self.tallies['request_em'] == 1:
-          temp += (str(self.tallies['request_em'])
-                   + ' other person is currently receiving email notifications '
+          temp += ('One other person is currently receiving email notifications '
                    + 'about each request for empathy.')
         self.tally_label.font_size = None
       else:
@@ -333,17 +334,24 @@ class MatchForm(MatchFormTemplate):
                    + ' people are currently receiving email notifications '
                    + 'about each request for empathy.')
         elif self.tallies['request_em'] == 1:
-          temp += (str(self.tallies['request_em'])
-                   + ' person is currently receiving email notifications '
+          temp += ('One person is currently receiving email notifications '
                    + 'about each request for empathy.')
     else:
       self.tally_label.font_size = None
     self.tally_label.text = temp
     if len(temp) > 0:
       self.tally_label.visible = True
+      self.note_label.text = ""
+      self.note_label.visible = False
     else:
       self.tally_label.visible = False
-
+      if self.request_em_check_box.checked:
+        self.note_label.text = ""
+        self.note_label.visible = False
+      else:
+        self.note_label.text = "Note: In the Settings menu (upper left), you can opt-in to receive an email notification when someone else requests empathy."
+        self.note_label.visible = True
+      
   def set_jitsi_link(self, jitsi_code):
     if jitsi_code == "":
       self.jitsi_column_panel.visible = False
@@ -497,7 +505,7 @@ class MatchForm(MatchFormTemplate):
 
   def message_textbox_pressed_enter(self, **event_args):
     """This method is called when the user presses Enter in this text box"""
-    anvil.server.call('add_message', self.message_textbox.text)
+    anvil.server.call('add_message', message=self.message_textbox.text)
     self.message_textbox.text = ""
     self.chat_repeating_panel.items = anvil.server.call('get_messages')
     self.call_js('scrollCard')
