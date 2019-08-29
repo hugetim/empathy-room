@@ -52,7 +52,7 @@ One inherent risk in participating via video chat is the possibility that the ot
 
 ### What is Jitsi?
 
-The video conferencing is provided via [Jitsi](https://github.com/jitsi/jitsi-meet), which is an open source project with an active community. It doesn't require account login, and it emphasizes privacy and security. It is owned by [8x8](https://www.8x8.com/about-us), which seems legit. The video conferencing is hosted separately from the Anvil webapp, so the Anvil app doesn't even see the video conference data.
+The video conferencing is provided via [Jitsi](https://github.com/jitsi/jitsi-meet), which is an open source project with an active community. It doesn't require account login, and it emphasizes privacy and security. It is owned by [8x8](https://www.8x8.com/about-us), which seems legit. (See [this interview with Jitsi's founder](https://www.8x8.com/blog/episode-5-meet-jitsi) for more on its origins.) The video conferencing is hosted separately from the Anvil webapp, so the Anvil app doesn't even see the video conference data.
 
 ### Who is making Empathy Spot?
 
