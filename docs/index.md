@@ -23,7 +23,7 @@ A website focused exclusively on facilitating live empathy exchanges, or ["empat
 
 ### How is this different from other attempts to connect strangers online?
 
-You are matched only with (1) people you have invited yourself or (2) people authorized to participate by NVC trainers (of your choice). You will be able to block anyone you do not wish to be matched with again, with the option to contact the NVC trainer who authorized their participation.
+You are matched only with people authorized to participate by NVC trainers. You will be able to block anyone you do not wish to be matched with again, with the option to contact the NVC trainer who authorized their participation.
 
 More generally, the guiding principles of Empathy Spot are geared toward fostering a community of trust:
 
@@ -35,12 +35,11 @@ More generally, the guiding principles of Empathy Spot are geared toward fosteri
 
 * If you are a student of Compassionate Communication, a.k.a. [Nonviolent Communication (NVC)](http://www.nycnvc.org/our-work/), Empathy Spot is designed for you, particularly if you are connected with a certified NVC trainer. 
 * If you are an NVC trainer, Empathy Spot is especially meant to be an asset for you and put you in control. 
-* If you have been invited by someone already participating in Empathy Spot, welcome, you're in the right place! 
-* For others, Empathy Spot is not really intended for you, at least at this point. Instead, the next step may be to connect with a local [event](https://www.cnvc.org/trainings), [trainer](https://www.cnvc.org/trainers), or [community](https://www.cnvc.org/trainings/practice-groups) to learn how to exchange empathy in the "NVC" way.
+* For others, Empathy Spot is not really intended for you, at least not at this point. Instead, consider connecting with a local [event](https://www.cnvc.org/trainings), [trainer](https://www.cnvc.org/trainers), or [community](https://www.cnvc.org/trainings/practice-groups).
 
 ### Why not let everyone use it?
 
-Empathy Spot is not designed to teach people how to exchange empathy, and it also requires some form of gatekeeping to prevent unintended uses. So the idea, currently, is that NVC trainers will vouch for their students, authorizing them to match with any other member to exchange empathy. Each member, in turn, will be able to invite guests to a personal group, allowing them to match with others in that group (but not the wider membership, unless authorized by an NVC trainer). 
+Empathy Spot is not designed to teach people how to exchange empathy, and it also requires some form of gatekeeping to prevent unintended uses. So the idea, currently, is that NVC trainers will vouch for their students, authorizing them to match with other members to exchange empathy. 
 
 ### Is the website safe in terms of data security and privacy?
 
