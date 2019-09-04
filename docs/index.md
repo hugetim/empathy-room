@@ -23,13 +23,11 @@ A website focused exclusively on facilitating live empathy exchanges, or ["empat
 
 ### How is this different from other attempts to connect strangers online?
 
-You are matched only with people authorized to participate by NVC trainers. You will be able to block anyone you do not wish to be matched with again, with the option to contact the NVC trainer who authorized their participation.
+You are matched only with people authorized to participate by NVC trainers. Empathy Spot also aims to foster trust through:
 
-More generally, the guiding principles of Empathy Spot are geared toward fostering a community of trust:
-
-* **Focus**: Exclusive focus on giving and receiving empathy
-* **Privacy**: No contact information is shared with other participants within the platform, and only communication directly related to empathy exchanges is allowed. 
-* **Transparency**: [Open source code](https://github.com/hugetim/empathyspot) and financial transparency, funded by free-will offerings (so far, $24 for the domain name) and lots of volunteer time.
+* **Focus**: Nothing but empathy.
+* **Privacy**: Your contact information and identity is kept private, and only communication directly related to empathy exchanges is allowed. 
+* **Transparency**: [Open source code](https://github.com/hugetim/empathyspot) and financial transparency, funded by free-will offerings (so far, $24 for the domain name and lots of volunteer time).
 
 ### Is Empathy Spot for me?
 
