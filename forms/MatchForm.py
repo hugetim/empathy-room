@@ -1,6 +1,5 @@
 from anvil import *
 import anvil.google.auth, anvil.google.drive
-from anvil.google.drive import app_files
 import anvil.google.auth, anvil.google.drive
 import anvil.server
 import anvil.users
@@ -10,7 +9,6 @@ import parameters as p
 import anvil.tz
 import helper as h
 import random
-import datetime
 
 
 class MatchForm(MatchFormTemplate):
@@ -61,7 +59,7 @@ class MatchForm(MatchFormTemplate):
     Set status and related time variables
     """
     self.last_5sec = h.now()
-    if (new_status and new_status != "matched"):
+    if new_status and new_status != "matched":
       self.seconds_left = new_seconds_left
       if self.status == "pinging" and new_status == "requesting":
         self.seconds_left = max(self.seconds_left, p.BUFFER_SECONDS)
@@ -284,63 +282,12 @@ class MatchForm(MatchFormTemplate):
       self.update_tally_label()
 
   def update_tally_label(self):
-    temp = ""
-    if self.tallies['receive_first'] > 1:
-      if self.tallies['will_offer_first'] > 0:
-        temp = ('There are currently '
-                + str(self.tallies['receive_first'] + self.tallies['will_offer_first'])
-                + ' others requesting an empathy exchange. Some are '
-                + 'requesting a match with someone willing to offer empathy first.')
-      else:
-        assert self.tallies['will_offer_first'] == 0
-        temp = ('There are currently '
-                + str(self.tallies['receive_first'])
-                + ' others requesting matches with someone willing to offer empathy first.')
-    elif self.tallies['receive_first'] == 1:
-      if self.tallies['will_offer_first'] > 0:
-        temp = ('There are currently '
-                + str(self.tallies['receive_first'] + self.tallies['will_offer_first'])
-                + ' others requesting an empathy exchange. '
-                + 'One is requesting a match with someone willing to offer empathy first.')
-      else:
-        assert self.tallies['will_offer_first'] == 0
-        temp = ('There is one person currently requesting a match with someone willing to offer empathy first.')
-    else:
-      assert self.tallies['receive_first'] == 0
-      if self.tallies['will_offer_first'] > 1:
-        temp = ('There are currently '
-                + str(self.tallies['will_offer_first'])
-                + ' others requesting an empathy exchange, '
-                + 'all of whom are willing to offer empathy first.')
-      elif self.tallies['will_offer_first'] == 1:
-        temp = ('There is one'
-                + ' person currently requesting an empathy exchange, '
-                + 'willing to offer empathy first.')
-      else:
-        assert self.tallies['will_offer_first'] == 0
-    if self.tallies['will_offer_first'] == 0:
-      if self.tallies['receive_first'] > 0:
-        if self.tallies['request_em'] > 1:
-          temp += (str(self.tallies['request_em'])
-                   + ' others are currently receiving email notifications '
-                   + 'about each request for empathy.')
-        elif self.tallies['request_em'] == 1:
-          temp += ('One other person is currently receiving email notifications '
-                   + 'about each request for empathy.')
-        self.tally_label.font_size = None
-      else:
-        self.tally_label.font_size = 12
-        if self.tallies['request_em'] > 1:
-          temp += (str(self.tallies['request_em'])
-                   + ' people are currently receiving email notifications '
-                   + 'about each request for empathy.')
-        elif self.tallies['request_em'] == 1:
-          temp += ('One person is currently receiving email notifications '
-                   + 'about each request for empathy.')
+    if self.tallies['will_offer_first'] == 0 and self.tallies['receive_first'] == 0:
+      self.tally_label.font_size = 12
     else:
       self.tally_label.font_size = None
-    self.tally_label.text = temp
-    if len(temp) > 0:
+    self.tally_label.text = h.tally_text(self.tallies)
+    if len(self.tally_label.text) > 0:
       self.tally_label.visible = True
       self.note_label.text = ""
       self.note_label.visible = False
