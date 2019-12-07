@@ -108,7 +108,7 @@ def init():
   elif status == 'pinging' and seconds_left <= 0:
     status, seconds_left, tallies = _cancel_other(user)
   if status in ('requesting', 'pinged', 'pinging'):
-    status, seconds_left, tallies = _confirm_wait(user)
+    status, seconds_left, tallies = confirm_wait_helper(user)
     request_type = _get_request_type(user)
   else:
     request_type = "will_offer_first"
@@ -266,6 +266,11 @@ def _create_match(user, excluded=()):
                earliest_request['last_confirmed'])
       if (current_row['ping_start'] - lc).seconds <= p.BUFFER_SECONDS:
         _match_commenced(user)
+      else:
+        if lc == current_row['last_confirmed']:
+          sm.pinged_email(user)
+        else:
+          sm.pinged_email(earliest_request['user'])
 
 
 def _create_matches(excluded=()):
