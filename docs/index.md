@@ -7,37 +7,11 @@ title: Empathy Spot
 
 If you've been invited to try out Empathy Spot, [click here to sign up or login](https://www.empathyspot.org/in/).
 
-## Vision
-
-To make it so that, at any time you choose, you can find someone to exchange empathy with via videochat. And to do this in a way that empowers NVC trainers and reinforces in-person communities.
-
 ## Current Status
 
 The prototype for Empathy Spot is in an "alpha" phase of development and testing. You can see the [roadmap here](https://github.com/hugetim/empathyspot/projects/1) (currently under construction). [Click here to receive an email when Empathy Spot becomes open to the public.](http://eepurl.com/gAHrFT) 
 
 ## FAQ
-
-### What is Empathy Spot?
-
-A website focused exclusively on facilitating live empathy exchanges, or ["empathy buddy chats"](http://www.nycnvc.org/empathy_network/empathy-buddy-handbook/), including between people who have not previously met. 
-
-### How is this different from other attempts to connect strangers online?
-
-You are matched only with people authorized to participate by NVC trainers. Empathy Spot also aims to foster trust through:
-
-* **Focus**: Nothing but empathy.
-* **Privacy**: Your contact information and identity is kept private, and only communication directly related to empathy exchanges is allowed. 
-* **Transparency**: [Open source code](https://github.com/hugetim/empathyspot) and financial transparency, funded by free-will offerings (so far, $24 for the domain name and lots of volunteer time).
-
-### Is Empathy Spot for me?
-
-* If you are a student of Compassionate Communication, a.k.a. [Nonviolent Communication (NVC)](http://www.nycnvc.org/our-work/), Empathy Spot is designed for you, particularly if you are connected with a certified NVC trainer. 
-* If you are an NVC trainer, Empathy Spot is especially meant to be an asset for you and put you in control. 
-* For others, Empathy Spot is not really intended for you, at least not at this point. Instead, consider connecting with a local [event](https://www.cnvc.org/trainings), [trainer](https://www.cnvc.org/trainers), or [community](https://www.cnvc.org/trainings/practice-groups).
-
-### Why not let everyone use it?
-
-Empathy Spot is not designed to teach people how to exchange empathy, and it also requires some form of gatekeeping to prevent unintended uses. So the idea, currently, is that NVC trainers will vouch for their students, authorizing them to match with other members to exchange empathy. 
 
 ### Is the website safe in terms of data security and privacy?
 
@@ -53,4 +27,4 @@ The video conferencing is provided via [Jitsi](https://github.com/jitsi/jitsi-me
 
 ### Who is making Empathy Spot?
 
-Up until now, it has been the personal project of [Tim Huegerich](https://www.linkedin.com/in/tim-huegerich-26101a8/). But if anyone is interested in contributing, check out the [GitHub repository](https://github.com/hugetim/empathyspot) and [project roadmap](https://github.com/hugetim/empathyspot/projects/1) (under construction). Interested users can request features and influence design decisions in the [Empathy Spot discussion "Loomio"](https://www.loomio.org/g/CtW4A2KG/empathy-spot-discussion) or on [GitHub](https://github.com/hugetim/empathyspot/issues). (Work is ongoing to further develop these avenues. I (Tim) am fairly new at this and really welcome suggestions from more experienced developers&mdash;and others!)
+Up until now, it has been the personal project of [Tim Huegerich](https://www.linkedin.com/in/tim-huegerich-26101a8/). But if anyone is interested in contributing, check out the [GitHub repository](https://github.com/hugetim/empathyspot) and [project roadmap](https://github.com/hugetim/empathyspot/projects/1) (under construction).
